@@ -1,0 +1,66 @@
+version: 1
+
+
+disable_existing_loggers: False
+
+formatters:
+  # Note about formats: https://docs.python.org/3/library/logging.html#logrecord-attributes
+  consoleFormatter:
+    format: "%(asctime)s - %(levelname)-8s : %(message)s"
+  fileFormatter:
+    format: "%(asctime)s - %(name)-15s - %(levelname)-8s : %(message)s"
+  errorFormatter:
+    format: "%(asctime)s,%(msecs)03d - %(levelname)s - [%(pathname)s:%(lineno)d in function %(funcName)s] : %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+
+handlers:
+  consoleHandler:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: consoleFormatter
+    stream: ext://sys.stdout
+  fileHandler:
+    class: logging.FileHandler
+    level: DEBUG
+    formatter: fileFormatter
+    filename: "app.log"
+  rotatingFileHandler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: fileFormatter
+    filename: "app.log"
+    maxBytes: 1024
+    backupCount: 10
+  timedRotatingFileHandler:
+    class: logging.handlers.TimedRotatingFileHandler
+    level: DEBUG
+    formatter: fileFormatter
+    filename: "app.log"
+    when: "MIDNIGHT"
+    backupCount: 360
+  errorTimedRotatingFileHandler:
+    class: logging.handlers.TimedRotatingFileHandler
+    level: DEBUG
+    formatter: errorFormatter
+    filename: error.log
+    when: "MIDNIGHT"
+    backupCount: 360
+
+root:
+  handlers: [consoleHandler, timedRotatingFileHandler]
+  level: DEBUG
+  propagate: False
+
+loggers:
+  dev:
+    handlers: [consoleHandler, fileHandler]
+    level: DEBUG
+    propagate: False
+  prod:
+    handlers: [consoleHandler, timedRotatingFileHandler]
+    level: DEBUG
+    propagate: False
+  error:
+    handlers: [consoleHandler, errorTimedRotatingFileHandler]
+    level: DEBUG
+    propagate: False
