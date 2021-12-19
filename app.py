@@ -17,3 +17,8 @@ logger.warning("warn message")
 logger.error("error message")
 logger.critical("critical message")
 report_error()
+
+try:
+    pass
+except Exception as e:
+    logger.error(e, exc_info=True)

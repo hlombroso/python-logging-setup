@@ -45,7 +45,7 @@ def update_filehandler_filename(log_directory, logging_config):
         os.makedirs(log_directory)
 
     for handler, fileHandler in logging_config["handlers"].items():
-        if handler != "consoleHandler":
+        if handler not in ["consoleHandler", "emailHandler"]:
             fileHandler["filename"] = os.path.join(log_directory, fileHandler["filename"])
 
 

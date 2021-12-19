@@ -1,6 +1,5 @@
 version: 1
 
-
 disable_existing_loggers: False
 
 formatters:
@@ -8,7 +7,7 @@ formatters:
   consoleFormatter:
     format: "%(asctime)s - %(levelname)-8s : %(message)s"
   fileFormatter:
-    format: "%(asctime)s - %(name)-15s - %(levelname)-8s : %(message)s"
+    format: "%(asctime)s - %(name)s - %(levelname)-8s : %(message)s"
   errorFormatter:
     format: "%(asctime)s,%(msecs)03d - %(levelname)s - [%(pathname)s:%(lineno)d in function %(funcName)s] : %(message)s"
     datefmt: "%Y-%m-%d %H:%M:%S"
@@ -38,7 +37,23 @@ handlers:
     filename: "app.log"
     when: "MIDNIGHT"
     backupCount: 360
+  emailHandler:
+    class: logging.handlers.SMTPHandler
+    mailhost: (smtp.example.com, 25)
+    credentials: (user_id,passwd)
+    fromaddr: noreply@example.com
+    toaddrs:
+      - recipient1@example.com
+      - recipient2@example.com
+    subject: "App in error"
   errorTimedRotatingFileHandler:
+    class: logging.handlers.TimedRotatingFileHandler
+    level: DEBUG
+    formatter: errorFormatter
+    filename: app.log
+    when: "MIDNIGHT"
+    backupCount: 360
+  errorOnlyTimedRotatingFileHandler:
     class: logging.handlers.TimedRotatingFileHandler
     level: DEBUG
     formatter: errorFormatter
@@ -62,5 +77,13 @@ loggers:
     propagate: False
   error:
     handlers: [consoleHandler, errorTimedRotatingFileHandler]
+    level: DEBUG
+    propagate: False
+  errorOnly:
+    handlers: [errorOnlyTimedRotatingFileHandler]
+    level: DEBUG
+    propagate: False
+  email:
+    handlers: [emailHandler]
     level: DEBUG
     propagate: False
